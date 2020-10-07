@@ -96,16 +96,19 @@ const Landing = ({ currentTheme, walletDetails, updateWalletStatus, setCurrentPa
 					})}
 				</Wallets>
 				<BottomLinks>
-					<Link href="https://denariitoken.github.io/" target="_blank">
+					<Link href="https://discord.gg/ryVyZDq" target="_blank">
 						<ButtonTertiaryLabel>
-							<LinkText>{t('button.havingTrouble')}</LinkText>
+							<LinkText>Discord</LinkText>
 						</ButtonTertiaryLabel>
 					</Link>
-					<Link href={`https://denariitoken.github.io/`} target="_blank">
+					<Link href={`https://ari.finance`} target="_blank">
 						<ButtonTertiaryLabel><LinkText>{t('button.whatIsSynthetix')}</LinkText></ButtonTertiaryLabel>
 					</Link>
-					<ExternalLink href={`https://github.com/Synthetixio/synthetix-mintr/`}>
-						<VersionLabel>v{process.env.REACT_APP_VERSION} - Forked from Mintr</VersionLabel>
+					<ExternalLink href={`https://etherscan.io/token/0x8a8b5318d3a59fa6d1d0a83a1b0506f2796b5670`}>
+						<VersionLabel>v1.0.4 Denarii [ARI]</VersionLabel>
+					</ExternalLink>
+					<ExternalLink href={`https://ipfs.io/ipns/k51qzi5uqu5dgj1au28jx96dzuo9hctce06kk92po2gd3x5n0r16fvqjeyjjhp/`}>
+						<VersionLabel>IPFS Hosted and Mirrored: k51qzi5uqu5dgj1au28jx96dzuo9hctce06kk92po2gd3x5n0r16fvqjeyjjhp</VersionLabel>
 					</ExternalLink>
 				</BottomLinks>
 			</WalletConnectContainer>
@@ -184,7 +187,7 @@ const Button = styled.button`
 	align-items: center;
 	background-color: ${props => props.theme.colorStyles.panelButton};
 	color: ${props => props.theme.colorStyles.tableBody};
-	border-radius: 6px;
+	border-radius: 15px;
 	border-style: none;
 	box-shadow: 0px 0px 0px 0px ${props => props.theme.colorStyles.shadow1};
 	opacity: ${props => (props.disabled ? '0.4' : 1)};
@@ -222,7 +225,7 @@ const Link = styled.a`
 	width: 300px;
 	cursor: pointer;
 	height: 50px;
-	border-radius: 6px;
+	border-radius: 15px;
 	margin: 10px 0;
 	display: flex;
 	align-items: center;

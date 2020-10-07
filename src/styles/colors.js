@@ -19,7 +19,7 @@ export default {
 	darkerpurp: '#55007a',
 	darkerrpurp: '#250035',
 	secondaryButton: 'rgba(255, 255, 255, 0.15)',
-	border: '#3f3f3f',
+	border: '#55007A',
 
 	// button palette
 	buttonDark: '#5A66F8',

@@ -14,6 +14,7 @@ import MaintenancePage from '../MaintenanceMessage';
 import NotificationCenter from 'components/NotificationCenter';
 import Landing from '../Landing';
 import Main from '../Main';
+import MainMobile from '../MainMobile';
 import MobileLanding from '../MobileLanding';
 
 import MainLayout from './components/MainLayout';
@@ -40,6 +41,8 @@ const CurrentPage: FC<CurrentPageProps> = ({ isOnMaintenance, page }) => {
 			return <Landing />;
 		case PAGES_BY_KEY.MAIN:
 			return <Main />;
+		case PAGES_BY_KEY.MAINMOBILE:
+			return <MainMobile />;
 		default:
 			return <Landing />;
 	}

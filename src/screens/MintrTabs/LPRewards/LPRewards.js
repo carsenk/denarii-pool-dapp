@@ -1,12 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import UnipoolARI from './UniPoolARI';
+import AripoolARI from './AriPoolARI';
+import Balpool from './BalPool';
 import UnipoolARIDAI from './UniPoolARIDAI';
 
 import { getCurrentTheme } from 'ducks/ui';
+
+import { getWalletDetails } from '../../../ducks/wallet';
 
 import PageContainer from 'components/PageContainer';
 import { Info } from 'components/Icons';
@@ -16,9 +20,10 @@ import { FlexDivCentered } from 'styles/common';
 import { H1, PageTitle, Subtext, DataLarge, PMedium } from 'components/Typography';
 
 import snxJSConnector from 'helpers/snxJSConnector';
-import { formatCurrency } from 'helpers/formatters';
+import { formatCurrency, formatCurrency2 } from 'helpers/formatters';
 
 import Logo from 'components/Logo';
+// import BackgroundImage from '../public/images/cardbg.jpg';
 
 const POOLS_MAJOR = [
 	{
@@ -26,6 +31,18 @@ const POOLS_MAJOR = [
 		name: 'unipoolARI',
 		image: '/images/ariswaps.png',
 		contract: 'unipoolARIContract',
+	},
+	{
+		title: 'lpRewards.actions.aripoolARI.title',
+		name: 'aripoolARI',
+		image: '/images/ARI.png',
+		contract: 'aripoolARIContract',
+	},
+	{
+		title: 'lpRewards.actions.balpool.title',
+		name: 'balpool',
+		image: '/images/balancer.png',
+		contract: 'balpoolContract',
 	},
 	// { // Uncomment all these for unipoolARIDAIContract for balancer pool once setup CK
 	// 	title: 'lpRewards.actions.balpoolARIDAI.title',
@@ -35,18 +52,59 @@ const POOLS_MAJOR = [
 	// },
 ];
 
-const LPRewards = ({ currentTheme }) => {
+const LPRewards = ({ currentTheme, walletDetails }) => {
 	const { t } = useTranslation();
 	const [currentPool, setCurrentPool] = useState(null);
 	const [distributions, setDistributions] = useState({});
+	const [distributions2, setDistributions2] = useState({});
 	const goBack = () => setCurrentPool(null);
+	const { currentWallet, networkName } = walletDetails;
+	const [balances, setBalances] = useState(null);
+
+	const fetchData = useCallback(async () => {
+		if (!snxJSConnector.initialized) return;
+		try {
+			const { aripoolStakeContract, uniswapV2Contract, unipoolARIContract, aripoolARIContract } = snxJSConnector;
+			const [ariPool, uniPool, univ3Held, uniHeld, univ2Held, univ2Staked, rewards] = await Promise.all([
+				aripoolStakeContract.balanceOf('0x355999C9B568c17bc50de80478848075ef1daBB0'),
+				uniswapV2Contract.balanceOf('0x4747cA5474f3044e3F9d3b8dC237E9C9f3A8fc04'),
+				uniswapV2Contract.balanceOf(currentWallet),
+				unipoolARIContract.balanceOf(currentWallet),
+				aripoolStakeContract.balanceOf(currentWallet),
+				aripoolARIContract.balanceOf(currentWallet),
+				aripoolARIContract.earned(currentWallet),
+			]);
+			setBalances({
+				ariPool: ariPool / 1e8 - 100000,
+				ariPoolBN: ariPool,
+				uniPool: uniPool / 1e18,
+				uniPoolBN: uniPool,
+				univ3Held: univ3Held / 1e18,
+				univ3HeldBN: univ3Held,
+				uniHeld: uniHeld / 1e18,
+				uniHeldBN: uniHeld,
+				univ2Held: univ2Held / 1e8,
+				univ2HeldBN: univ2Held,
+				univ2Staked: univ2Staked / 1e8,
+				univ2StakedBN: univ2Staked,
+				rewards: rewards / 1e8,
+			});
+		} catch (e) {
+			console.log(e);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [currentWallet, snxJSConnector.initialized]);
 
 	useEffect(() => {
-		const { unipoolARIContract } = snxJSConnector; //, unipoolARIDAIContract 
+		fetchData();
+	}, [fetchData]);
+
+	useEffect(() => {
+		const { unipoolARIContract, aripoolARIContract, balpoolContract } = snxJSConnector; //, unipoolARIDAIContract 
 
 		const getRewardsAmount = async () => {
 			try {
-				const contracts = [unipoolARIContract];//, unipoolARIDAIContract
+				const contracts = [unipoolARIContract, aripoolARIContract, balpoolContract];//, unipoolARIDAIContract
 				const rewardsData = await Promise.all(
 					contracts.map(contract => Promise.all([contract.DURATION(), contract.rewardRate()]))
 				);
@@ -61,7 +119,25 @@ const LPRewards = ({ currentTheme }) => {
 				setDistributions({});
 			}
 		};
+		const getRewardsTime = async () => {
+			try {
+				const contracts = [unipoolARIContract, aripoolARIContract, balpoolContract];//, unipoolARIDAIContract
+				const timeData = await Promise.all(
+					contracts.map(contract => Promise.all([contract.periodFinish()]))
+				);
+				let contractRewards2 = {};
+				timeData.forEach(([period], i) => {
+					contractRewards2[contracts[i].address] = Math.ceil(((period - new Date().getTime() / 1000) / 60) / 60);
+				});
+				//console.log(contractRewards);
+				setDistributions2(contractRewards2);
+			} catch (e) {
+				console.log(e);
+				setDistributions2({});
+			}
+		};
 		getRewardsAmount();
+		getRewardsTime();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -69,6 +145,10 @@ const LPRewards = ({ currentTheme }) => {
 		switch (poolName) {
 			case 'unipoolARI':
 				return <UnipoolARI goBack={goBack} />;
+			case 'aripoolARI':
+				return <AripoolARI goBack={goBack} />;
+			case 'balpool':
+				return <Balpool goBack={goBack} />;
 			// case 'balpoolARIDAI':
 			// 	return <UnipoolARIDAI goBack={goBack} />;
 			default:
@@ -82,12 +162,15 @@ const LPRewards = ({ currentTheme }) => {
 				getPoolComponent(currentPool)
 			) : (
 				<>
+				<Network>Account: {currentWallet} ♦ {networkName}</Network>
+				<BalDiv><Balance><Balspan>Your Balance</Balspan> {`${balances ? formatCurrency(balances.univ2Held) : 0} ARI`}<SmallBal>Staking {`${balances ? formatCurrency(balances.univ2Staked) : 0} ARI`}</SmallBal><BalLogo src={`/images/ARI.png`} /></Balance><Balance2><Balspan>Your LP Shares</Balspan> {`${balances ? formatCurrency(balances.univ3Held) : 0} UNI-V2`}<SmallBal>Staking {`${balances ? formatCurrency(balances.uniHeld) : 0} UNI-V2`}</SmallBal><SmallBal>Total Pooled: {`${balances ? formatCurrency(balances.uniPool) : 0} UNI-V2`}</SmallBal><SmallBal>Pool Control: {`${balances ? formatCurrency2(formatCurrency(balances.uniHeld) / formatCurrency(balances.uniPool) * 100) : 0}%`}</SmallBal></Balance2></BalDiv>
 					<PageTitleCentered>{t('lpRewards.intro.title')}</PageTitleCentered>
 					{[POOLS_MAJOR].map((pools, i) => {
 						return (
 							<ButtonRow key={`pool-${i}`}>
 								{pools.map(({ title, name, image, contract }, i) => {
-									const distribution = distributions[snxJSConnector[contract].address] || 0; //50000
+									const distribution = distributions[snxJSConnector[contract].address] || 0; //50000 Rewards
+									const distribution2 = distributions2[snxJSConnector[contract].address] || 0; //Time Left
 									//console.log('DISTRIBUTION:!!!!!!', distributions[snxJSConnector[contract].address]);
 									return (
 										<Button key={`button-${i}`} onClick={() => setCurrentPool(name)}>
@@ -98,7 +181,7 @@ const LPRewards = ({ currentTheme }) => {
 												</ButtonHeading>
 												<StyledSubtext>{t('lpRewards.shared.info.weeklyRewards')}:</StyledSubtext>
 												{distribution !== 0 ? (
-													<StyledDataLarge>{formatCurrency(distribution, 0)} ARI</StyledDataLarge>
+													<StyledDataLarge>~{formatCurrency(distribution, 0)} ARI</StyledDataLarge>
 												) : (
 													<CompletedLabel>
 														<CompletedLabelHeading>
@@ -114,6 +197,11 @@ const LPRewards = ({ currentTheme }) => {
 															</TooltipIconContainer>
 														</Tooltip>
 													</CompletedLabel>
+												)}
+												{distribution2 >= 0 ? (
+													<StyledDataLarge2>~{distribution2} hours left</StyledDataLarge2>
+												) : (
+													<StyledDataLarge></StyledDataLarge>
 												)}
 											</ButtonContainer>
 										</Button>
@@ -131,6 +219,7 @@ const LPRewards = ({ currentTheme }) => {
 const PageTitleCentered = styled(PageTitle)`
 	text-align: center;
 	justify-content: center;
+	color: #d1d1d1;
 `;
 
 const CompletedLabel = styled(FlexDivCentered)`
@@ -148,13 +237,14 @@ const CompletedLabelHeading = styled(PMedium)`
 
 const Button = styled.button`
 	cursor: pointer;
-	height: 348px;
-	background-color: ${props => props.theme.colorStyles.panelButton};
-	border: 1px solid ${props => props.theme.colorStyles.borders};
-	border-radius: 5px;
+	height: 300px;
+	background: rgb(73,0,130);
+	background: linear-gradient(180deg, rgba(73,0,130,0.8113620448179272) 0%, rgba(116,14,168,0.6713060224089635) 100%);
+	border: 1px solid #420060;
+	border-radius: 25px;
 	box-shadow: 0px 5px 10px 5px ${props => props.theme.colorStyles.shadow1};
 	transition: transform ease-in 0.2s;
-	width: 222px;
+	width: 100%;
 	&:hover {
 		transform: translateY(-2px);
 	}
@@ -172,7 +262,7 @@ const ButtonContainer = styled.div`
 
 const ButtonHeading = styled.div`
 	height: 128px;
-	margin-bottom: 30px;
+	margin-bottom: 4px;
 `;
 
 const ButtonRow = styled.div`
@@ -201,7 +291,17 @@ const StyledHeading = styled(H1)`
 
 const StyledDataLarge = styled(DataLarge)`
 	color: ${props => props.theme.colorStyles.panelText};
+	font-size: 26px;
+`;
+
+const StyledDataLarge2 = styled(DataLarge)`
+	color: ${props => props.theme.colorStyles.panelText};
 	font-size: 16px;
+	margin-top:15px;
+	background-color: rgba(0,0,0,0.15);
+	color:#a47bc1;
+	padding:10px;
+	border-radius:15px;
 `;
 
 const StyledSubtext = styled(Subtext)`
@@ -216,6 +316,70 @@ const TooltipIconContainer = styled.div`
 	height: 23px;
 `;
 
+const BalDiv = styled.div`
+	margin: 0 auto;
+	width: 800px;
+	text-align:center;
+`;
+
+const SmallBal = styled.div`
+	color: #a47bc1;
+	font-size: 16px;
+`;
+
+const Balance = styled.div`
+	color: #FFF;
+	font-size: 21px;
+	width: 40%;
+	margin: 0 auto;
+	display: inline-block;
+	font-weight: thin;
+	text-align: center;
+	margin-top:30px;
+	background-color: rgba(0,0,0,0.15);
+	border-radius: 15px;
+	padding:30px;
+	margin-right:33px;
+`;
+
+const Balance2 = styled.div`
+	color: #FFF;
+	font-size: 21px;
+	width: 40%;
+	display: inline-block;
+	margin: 0 auto;
+	margin-top:30px;
+	font-weight: thin;
+	text-align: center;
+	background-color: rgba(0,0,0,0.15);
+	border-radius: 15px;
+	padding:30px;
+`;
+
+const Network = styled('span')`
+	background-color: rgb(29, 0, 43);
+	border-radius: 15px;
+	text-align: center;
+	padding:10px;
+	display:block;
+	color: #fff;
+	width: 50%;
+	margin: 35px auto;
+	margin-bottom: 0;
+	font-size:16px;
+`;
+
+const Balspan = styled.div`
+	color: #888;
+`;
+
+const BalLogo = styled.img`
+	width: 36px;
+	height: 36px;
+	margin: 5px auto;
+	margin-bottom:0;
+`;
+
 const SmallLogo = styled(Logo)`
 	width: 75px;
 	height: 75px;
@@ -224,6 +388,7 @@ const SmallLogo = styled(Logo)`
 
 const mapStateToProps = state => ({
 	currentTheme: getCurrentTheme(state),
+	walletDetails: getWalletDetails(state),
 });
 
 export default connect(mapStateToProps, null)(LPRewards);

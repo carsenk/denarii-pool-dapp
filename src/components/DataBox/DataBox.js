@@ -3,10 +3,11 @@ import styled from 'styled-components';
 
 import { DataHeaderLarge } from '../Typography';
 
-const DataBox = ({ heading, body }) => {
+const DataBox = ({ heading, icon, body }) => {
 	return (
 		<Box>
 			<DataHeaderLarge>{heading}</DataHeaderLarge>
+			<Image>{icon}</Image>
 			<Amount>{body}</Amount>
 		</Box>
 	);
@@ -15,9 +16,11 @@ const DataBox = ({ heading, body }) => {
 const Box = styled.div`
 	flex: 1;
 	padding: 18px;
+	margin: 10px;
 	white-space: nowrap;
-	border: 1px solid ${props => props.theme.colorStyles.borders};
-	border-radius: 2px;
+	border: 4px solid #55007A;
+	background-color: #300047;
+	border-radius: 15px;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -25,6 +28,13 @@ const Box = styled.div`
 `;
 
 const Amount = styled.span`
+	color: ${props => props.theme.colorStyles.hyperlink};
+	font-family: 'EuclidCircularB-regular';
+	font-size: 16px;
+	margin: 16px 0px 0px 0px;
+`;
+
+const Image = styled.span`
 	color: ${props => props.theme.colorStyles.hyperlink};
 	font-family: 'EuclidCircularB-regular';
 	font-size: 16px;

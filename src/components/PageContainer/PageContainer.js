@@ -10,17 +10,16 @@ const PageContainer = ({ children }) => {
 };
 
 const Wrapper = styled.div`
-	padding: 40px 48px 0 48px;
+	padding: 10px 48px 0 48px;
 `;
 
 const Container = styled.div`
 	position: relative;
-	width: 100%;
-	max-width: 720px;
+	width: 80%;
 	margin: 0 auto;
 	padding: 0 5px;
 	overflow: hidden;
-	height: 850px;
+	min-height: 835px;
 `;
 
 export default PageContainer;

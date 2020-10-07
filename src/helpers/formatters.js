@@ -7,6 +7,12 @@ export const formatCurrency = (value, decimals = 8) => {
 	return numbro(value).format('0,0.' + '0'.repeat(decimals));
 };
 
+export const formatCurrency2 = (value, decimals = 2) => {
+	if (!value) return 0;
+	if (!Number(value)) return 0;
+	return numbro(value).format('0,0.' + '0'.repeat(decimals));
+};
+
 export const formatCurrencyWithSign = (sign, value, decimals = 2) =>
 	`${sign}${formatCurrency(value, decimals)}`;
 

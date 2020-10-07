@@ -1,8 +1,8 @@
 import themeDark from './dark';
 
 const fontFamilies = {
-	regular: 'EuclidCircularB-Regular',
-	medium: 'Archia-medium',
+	regular: 'Roboto',
+	medium: 'Poppins',
 };
 
 export const isDarkTheme = theme => true;

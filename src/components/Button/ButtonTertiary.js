@@ -23,7 +23,7 @@ const Button = styled.button`
 	border: 0px solid ${props => props.theme.colorStyles.borders};
 	height: 40px;
 	padding: 2px 20px 0 20px;
-	border-radius: 10px;
+	border-radius: 15px;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;

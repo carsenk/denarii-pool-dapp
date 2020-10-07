@@ -2,8 +2,8 @@
 	"onboarding": {
 		"slides": {
 			"welcome": {
-				"title": "Welcome to Denarii’s Rewards Program",
-				"description": "Here you can stake your ARI Liquidity tokens in order to receive your rewards. You can also claim your ARI tokens and exit at any time. Simply connect your wallet, and select the pool you have already added liquidity to and stake your tokens."
+				"title": "Welcome to Denarii’s LP Staking Pools",
+				"description": "Welcome to the Denarii (ARI) Staking Pool Dapp. You can now stake your ARI for ARI rewards or you can stake your ARI Liquidity tokens in order to receive your rewards. You can also claim your ARI tokens and exit at any time. Simply connect your wallet, and select the pool you have already added liquidity to and stake your tokens."
 			}
 		},
 		"walletConnection": {
@@ -59,7 +59,7 @@
 			"balance": "Balance"
 		},
 		"buttons": {
-			"exchange": "Go to Synthetix.Exchange",
+			"exchange": "Go to Denariiswap",
 			"synthetixDashboard": "View prices on Dashboard",
 			"refresh": "Refresh",
 			"delegate": "Delegate"
@@ -71,7 +71,7 @@
 			"depot": "Depot",
 			"transactionsHistory": "Transactions",
 			"escrow": "Escrow",
-			"lpRewards": "ARI Liquidity Pool Rewards"
+			"lpRewards": "ARI Staking Pools"
 		}
 	},
 	"home": {
@@ -333,11 +333,17 @@
 	"lpRewards": {
 		"intro": {
 			"title": "Please choose a pool",
-			"completed": "Completed"
+			"completed": "Closed"
 		},
 		"actions": {
 			"unipoolARI": {
-				"title": "Uniswap v2 ARI-ETH"
+				"title": "Uniswap v2 ARI/ETH"
+			},
+			"aripoolARI": {
+				"title": "Direct ARI Staking"
+			},
+			"balpool": {
+				"title": "Balancer LP Triple Pool"
 			},
 			"balpoolARIDAI": {
 				"title": "Balancer ARI-USDC-DAI"
@@ -362,6 +368,7 @@
 			"buttons": {
 				"unlock": "unlock",
 				"goToContract": "Go to contract",
+				"addLiquid": "Add Liquidity",
 				"stake": "Stake tokens",
 				"claim": "Claim rewards",
 				"unstake": "Unstake tokens",
@@ -370,7 +377,7 @@
 				"settle": "Settle"
 			},
 			"info": {
-				"weeklyRewards": "Weekly rewards"
+				"weeklyRewards": "Current weekly rewards"
 			}
 		}
 	},
@@ -381,17 +388,37 @@
 			"transaction": "Setting Uni-V2 LP token allowance"
 		},
 		"unlocked": {
-			"subtitle": "Here you can stake your UNI-V2 Liquidity Provider (LP) tokens, claim ARI rewards, or exit completely."
+			"subtitle": "Here you can stake your UNI-V2 Liquidity Provider (LP) tokens, claim ARI staking rewards, or exit completely. UNI-V2 LP Tokens for ARI are obtained by adding liquidity to the ARI-ETH Uniswap pool."
+		}
+	},
+	"aripoolARI": {
+		"title": "ARI Token Staking Rewards",
+		"locked": {
+			"subtitle": "First approve the ARI pool contract to transfer your ARI tokens for staking.",
+			"transaction": "Setting ARI token allowance"
+		},
+		"unlocked": {
+			"subtitle": "Here you can stake and unstake your Denarii (ARI) tokens, claim your ARI staking rewards, or exit completely."
+		}
+	},
+	"balpool": {
+		"title": "Balancer ARI-USDC-DAI LP Token Rewards",
+		"locked": {
+			"subtitle": "First approve the Balancer pool contract to transfer your ARI-USDC-DAI BPT tokens for staking.",
+			"transaction": "Setting Balancer BPT token allowance"
+		},
+		"unlocked": {
+			"subtitle": "Here you can stake your Balancer Liquidity Provider LP tokens (BPT), claim ARI staking rewards, or exit completely. Balancer BPT Tokens for ARI are obtained by adding liquidity to the ARI-USDC-DAI Balancer pool."
 		}
 	},
 	"balpoolARIDAI": {
 		"title": "Balancer ARI-USDC-DAI LP Token Rewards",
 		"locked": {
-			"subtitle": "First approve the Unipool contract to transfer your ARI-USDC-DAI UNI-V2 tokens for staking.",
+			"subtitle": "First approve the Balancer pool contract to transfer your ARI-USDC-DAI BPT tokens for staking.",
 			"transaction": "Setting Balancer LP token allowance"
 		},
 		"unlocked": {
-			"subtitle": "Here you can stake your Balancer Liquidity Provider (LP) tokens, claim ARI rewards, or exit completely."
+			"subtitle": "Here you can stake your Balancer Liquidity Provider LP tokens (BPT), claim ARI staking rewards, or exit completely."
 		}
 	},
 	"delegation": {
@@ -531,14 +558,14 @@
 		"subtitle": "Sorry for the inconvenience, it will be back shortly."
 	},
 	"mobileLanding": {
-		"title": "ARI Rewards Dashboard is currently unavailable for mobile and tablet.",
-		"subtitle": "We hope to have a mobile version available in the next few months."
+		"title": "The ARI Staking Pool is currently unavailable for mobile or tablet.",
+		"subtitle": "We hope to have a mobile version available soon. View this site on a desktop computer."
 	},
 	"tooltip": {
 		"claim": "To claim rewards, you must be within 1% of the Target Collateralization Ratio. If you are below this figure, you will be blocked from claiming rewards until you burn enough sUSD.",
 		"debtBalance": "Your debt begins as the amount of sUSD you initially mint, and fluctuates according to gains or losses made by other Synth holders. Any time someone holds a Synth that appreciates in value, that gain is distributed proportionally between all the staked ARI holders’ debts. To unlock all your staked ARI, you must first pay off your debt.",
 		"synthsBalance": "Synths are the synthetic assets in the Synthetix system, including sUSD, sBTC, iBTC, and all of the other assets available at Synthetix.Exchange. This figure is the total value of all the Synths held in this wallet. If you wish to convert some Synths back into sUSD, click the TRADE button.",
 		"track": "<0>Issued debt:</0> This displays the total of all your mints and burns over time, revealing how only your C-Ratio management has affected your debt.<1 /><2>Actual debt:</2> This displays your total debt over time.",
-		"poolCompleted": "This incentive is now completed. Please collect any rewards accrued and withdraw your tokens."
+		"poolCompleted": "This pool is currently not rewarding anything. Check back at a later time to see if it does!"
 	}
 }

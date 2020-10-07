@@ -6,12 +6,12 @@ import {
 	PORTIS_APP_ID,
 } from './networkHelper';
 import { ethers } from 'ethers';
-import { uniswapV2, unipoolARI, balpool } from './contracts';
+import { uniswapV2, unipoolARI, aripoolARI, aripoolStake, balpool, balpoolToken } from './contracts';
 
 const uniswapARIETHAddress = '0x399c74f05c912d60329b038d52628558f28e4f7e'; //Uniswap ARI-ETH
 const balpoolARIUSDCDAIAddress = '0xa516b20aaa2ceaf619004fda6d7d31dcc98f342a'; //Balancer ARI-USDC-DAI 0xa516b20aaa2ceaf619004fda6d7d31dcc98f342a
 //const unipoolcontract = '0x94741e41573d4539A7aE1c8265a8661D42Bb7d82' // ARI / UNIv2 LP Token Staking Pool Contract
-//const aritoken = '0x8a8b5318d3a59fa6d1d0a83a1b0506f2796b5670' // ARI Token Contract
+const aritoken = '0x8A8b5318d3A59fa6D1d0A83A1B0506f2796b5670' // ARI Token Contract
 
 let snxJSConnector = {
 	initialized: false,
@@ -35,6 +35,18 @@ let snxJSConnector = {
 			this.unipoolARIContract = new ethers.Contract(
 				unipoolARI.address,
 				unipoolARI.abi,
+				this.signer
+			);
+			this.aripoolStakeContract = new ethers.Contract(aripoolStake.address, aripoolStake.abi, this.signer);
+			this.aripoolARIContract = new ethers.Contract(
+				aripoolARI.address,
+				aripoolARI.abi,
+				this.signer
+			);
+			this.balpoolTokenContract = new ethers.Contract(balpoolToken.address, balpoolToken.abi, this.signer);
+			this.balpoolContract = new ethers.Contract(
+				balpool.address,
+				balpool.abi,
 				this.signer
 			);
 			this.unipoolARIDAIContract = new ethers.Contract(
@@ -183,8 +195,8 @@ const getSignerConfig = ({ type, networkId, derivationPath, networkName }) => {
 	}
 	if (type === SUPPORTED_WALLETS_MAP.COINBASE) {
 		return {
-			appName: 'Mintr',
-			appLogoUrl: `${window.location.origin}/images/mintr-leaf-logo.png`,
+			appName: 'ARI Staking Pool',
+			appLogoUrl: `${window.location.origin}/images/ARI.png`,
 			jsonRpcUrl: INFURA_JSON_RPC_URLS[networkId],
 			networkId,
 		};

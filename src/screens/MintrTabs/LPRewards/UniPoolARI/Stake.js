@@ -12,8 +12,13 @@ import { getWalletDetails } from '../../../../ducks/wallet';
 import { PageTitle, PLarge } from '../../../../components/Typography';
 import DataBox from '../../../../components/DataBox';
 import { ButtonTertiary, ButtonPrimary } from '../../../../components/Button';
+import Input from '../../../../components/Input';
 
 import UnipoolActions from '../../../UnipoolActions';
+import Slider from '@material-ui/core/Slider';
+
+import Logo from '../../../../components/Logo';
+import { OutputFileType } from 'typescript';
 
 const TRANSACTION_DETAILS = {
 	stake: {
@@ -38,6 +43,7 @@ const Stake = ({ walletDetails, goBack }) => {
 	const { t } = useTranslation();
 	const { unipoolARIContract } = snxJSConnector;
 	const [balances, setBalances] = useState(null);
+	const [stakeUNIAmount, setUNIStakeAmount] = useState('');
 	const [gasLimit, setGasLimit] = useState(TRANSACTION_DETAILS.stake.gasLimit);
 	const [currentScenario, setCurrentScenario] = useState({});
 	const { currentWallet } = walletDetails;
@@ -50,6 +56,7 @@ const Stake = ({ walletDetails, goBack }) => {
 				uniswapV2Contract.balanceOf(currentWallet),
 				unipoolARIContract.balanceOf(currentWallet),
 				unipoolARIContract.earned(currentWallet),
+				//unipoolARIContract.balanceOf(unipoolARIContract),
 			]);
 			setBalances({
 				univ2Held: bigNumberFormatter(univ2Held),
@@ -103,35 +110,35 @@ const Stake = ({ walletDetails, goBack }) => {
 	return (
 		<Container>
 			<UnipoolActions {...currentScenario} onDestroy={() => setCurrentScenario({})} />
-			<Navigation>
-				<ButtonTertiary onClick={goBack}>{t('button.navigation.back')}</ButtonTertiary>
-				<ButtonTertiary
-					as="a"
-					target="_blank"
-					href={`https://etherscan.io/address/${unipoolARIContract.address}`}
-				>
-					{t('lpRewards.shared.buttons.goToContract')} ↗
-				</ButtonTertiary>
-			</Navigation>
-			<PageTitle>{t('unipoolARI.title')}</PageTitle>
-			<PLarge>{t('unipoolARI.unlocked.subtitle')}</PLarge>
 			<BoxRow>
 				<DataBox
 					heading={t('lpRewards.shared.data.balance')}
+					icon={<ActionLogo src={"/images/aripooln.png"} big />}
 					body={`${balances ? formatCurrency(balances.univ2Held) : 0} UNI-V2`}
 				/>
 				<DataBox
 					heading={t('lpRewards.shared.data.staked')}
+					icon={<ActionLogo src={"/images/aripool.png"} big />}
 					body={`${balances ? formatCurrency(balances.univ2Staked) : 0} UNI-V2`}
 				/>
 				<DataBox
 					heading={t('lpRewards.shared.data.rewardsAvailable')}
+					icon={<ActionLogo src={"/images/ARI.png"} big />}
 					body={`${balances ? formatCurrency(balances.rewards) : 0} ARI`}
 				/>
 			</BoxRow>
-			<ButtonBlock>
+			<Output>{`${stakeUNIAmount} UNI-V2 LP (${balances && Math.trunc(stakeUNIAmount / formatCurrency(balances.univ2Held) * 100)}% of total)`}</Output>
+			<ButtonBlock>				
 				<ButtonRow>
-					<ButtonAction
+				<InputSlider
+							onChange={e => setUNIStakeAmount(e.target.value)}
+							value={stakeUNIAmount}
+							type="range"
+							step="0.000000000000001"
+							min="0.000000000000000000"
+							max={balances && formatCurrency(balances.univ2Held)}
+						/>
+					<ButtonActionNM
 						onMouseEnter={() => setGasLimit(TRANSACTION_DETAILS['stake'].gasLimit)}
 						disabled={!balances || !balances.univ2Held}
 						onClick={() =>
@@ -139,14 +146,16 @@ const Stake = ({ walletDetails, goBack }) => {
 								contract: 'unipoolARIContract',
 								action: 'stake',
 								label: t('lpRewards.shared.actions.staking'),
-								amount: `${balances && formatCurrency(balances.univ2Held)} UNI-V2`,
-								param: balances && balances.univ2HeldBN,
+								amount: `${stakeUNIAmount} UNI-V2 LP`,
+								param: stakeUNIAmount * 1e18,
 								...TRANSACTION_DETAILS['stake'],
 							})
 						}
 					>
-						{t('lpRewards.shared.buttons.stake')}
-					</ButtonAction>
+						Stake LP tokens
+					</ButtonActionNM>
+					</ButtonRow>
+					<ButtonRow>
 					<ButtonAction
 						onMouseEnter={() => setGasLimit(TRANSACTION_DETAILS['claim'].gasLimit)}
 						disabled={!balances || !balances.rewards}
@@ -162,8 +171,6 @@ const Stake = ({ walletDetails, goBack }) => {
 					>
 						{t('lpRewards.shared.buttons.claim')}
 					</ButtonAction>
-				</ButtonRow>
-				<ButtonRow>
 					<ButtonAction
 						onMouseEnter={() => setGasLimit(TRANSACTION_DETAILS['unstake'].gasLimit)}
 						disabled={!balances || !balances.univ2Staked}
@@ -180,7 +187,7 @@ const Stake = ({ walletDetails, goBack }) => {
 					>
 						{t('lpRewards.shared.buttons.unstake')}
 					</ButtonAction>
-					<ButtonAction
+					<ButtonActionNM
 						onMouseEnter={() => setGasLimit(TRANSACTION_DETAILS['exit'].gasLimit)}
 						disabled={!balances || (!balances.univ2Staked && !balances.rewards)}
 						onClick={() =>
@@ -196,9 +203,30 @@ const Stake = ({ walletDetails, goBack }) => {
 						}
 					>
 						{t('lpRewards.shared.buttons.exit')}
-					</ButtonAction>
+					</ButtonActionNM>
 				</ButtonRow>
+					<StakeBox>
+					<PT>{t('unipoolARI.title')}</PT>
+					<PALarge>{t('unipoolARI.unlocked.subtitle')}</PALarge>
+					</StakeBox>
 			</ButtonBlock>
+			<Navigation>
+				<ButtonTertiary onClick={goBack}>{t('button.navigation.back')}</ButtonTertiary>
+				<ButtonTertiary
+					as="a"
+					target="_blank"
+					href={`https://etherscan.io/address/${unipoolARIContract.address}`}
+				>
+					 ↗ {t('lpRewards.shared.buttons.goToContract')}
+				</ButtonTertiary>
+				<ButtonTertiary
+					as="a"
+					target="_blank"
+					href={`https://uniswap.exchange/add/0x8a8b5318d3a59fa6d1d0a83a1b0506f2796b5670/ETH`}
+				>
+					 + {t('lpRewards.shared.buttons.addLiquid')}
+				</ButtonTertiary>
+			</Navigation>
 			<TransactionPriceIndicator gasLimit={gasLimit} canEdit={true} />
 		</Container>
 	);
@@ -214,13 +242,40 @@ const Navigation = styled.div`
 	margin-bottom: 40px;
 `;
 
+const StakeBox = styled.div`
+	font-size: 16px;
+	font-weight: 100;
+	background-color: rgba(0,0,0,0.15);
+	border-radius:15px;
+	margin-bottom:30px;
+	padding:30px;
+`;
+
+const PT = styled.div`
+	font-size: 26px;
+	font-weight: 100;
+	color: #e5e5e5;
+	margin-bottom:15px;
+`;
+
+const PALarge = styled.div`
+	font-size: 16px;
+	font-weight: 100;
+	color: #e5e5e5;
+`;
+
 const BoxRow = styled.div`
-	margin-top: 42px;
+	margin-top: 35px;
 	display: flex;
 `;
 
 const ButtonBlock = styled.div`
-	margin-top: 58px;
+	margin-top: 12px;
+`;
+
+const ActionLogo = styled.img`
+	width: 48px;
+	height: 48px;
 `;
 
 const ButtonRow = styled.div`
@@ -228,13 +283,35 @@ const ButtonRow = styled.div`
 	margin-bottom: 28px;
 `;
 
+const ButtonActionNM = styled(ButtonPrimary)`
+	flex: 1;
+	width: 10px;
+	height: 64px;
+	text-transform: none;
+`;
+
+const InputSlider = styled.input`
+	width:350px;
+	margin-right:34px;
+	color: purple;
+	background: transparent !important;
+	border-color: purple !important;
+`;
+
+const Output = styled.div`
+	text-align: center;
+	color:#FFF;
+	width:100%;
+	margin: 0 auto;
+	margin-top:5px;
+	margin-bottom:5px;
+`;
+
 const ButtonAction = styled(ButtonPrimary)`
 	flex: 1;
 	width: 10px;
 	height: 64px;
-	&:first-child {
-		margin-right: 34px;
-	}
+	margin-right: 34px;
 	text-transform: none;
 `;
 

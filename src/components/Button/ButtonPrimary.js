@@ -21,7 +21,7 @@ export const ButtonPrimaryMedium = ({ children, onClick, disabled }) => {
 const Button = styled.button`
 	width: ${props => (props.width ? props.width : '400px')};
 	height: ${props => (props.height ? props.height : '72px')};
-	border-radius: 10px;
+	border-radius: 15px;
 	text-transform: none;
 	border: none;
 	cursor: pointer;

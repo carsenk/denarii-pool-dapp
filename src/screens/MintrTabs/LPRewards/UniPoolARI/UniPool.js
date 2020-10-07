@@ -16,6 +16,7 @@ import Stake from './Stake';
 const UniPool = ({ goBack, walletDetails }) => {
 	const [hasAllowance, setAllowance] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
+	const [stakeUNIAmount, setUNIStakeAmount] = useState('');
 	const { currentWallet } = walletDetails;
 
 	const fetchAllowance = useCallback(async () => {
