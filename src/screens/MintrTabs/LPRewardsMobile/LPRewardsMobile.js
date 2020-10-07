@@ -165,7 +165,7 @@ const LPRewardsMobile = ({ currentTheme, walletDetails }) => {
 			) : (
 				<>
 				<Network>{shortenAddress(currentWallet)} ♦ {networkName}</Network>
-				<BalDiv><Balance><Balspan>Your Balance</Balspan><Bal>{`${balances ? formatCurrency(balances.univ2Held) : 0} ARI`}</Bal><SmallBal>Staking {`${balances ? formatCurrency(balances.univ2Staked) : 0} ARI`}</SmallBal><SmallBal>&nbsp;</SmallBal></Balance><Balance2><Balspan>Your LP Shares</Balspan><Bal>{`${balances ? formatCurrency(balances.univ3Held) : 0} UNI-V2`}</Bal><SmallBal>Staking {`${balances ? formatCurrency(balances.uniHeld) : 0} UNI-V2`}</SmallBal><SmallBal>Total Pooled: {`${balances ? formatCurrency(balances.uniPool) : 0} UNI-V2`}</SmallBal><SmallBal>Pool Control: {`${balances ? formatCurrency2(formatCurrency(balances.uniHeld) / formatCurrency(balances.uniPool) * 100) : 0}%`}</SmallBal></Balance2></BalDiv>
+				<BalDiv><Balance><Balspan>Your Balance</Balspan><Bal>{`${balances ? formatCurrency(balances.univ2Held) : 0} ARI`}</Bal><SmallBal>Staking {`${balances ? formatCurrency(balances.univ2Staked) : 0} ARI`}</SmallBal><BalLogo src={`/images/ARI.png`} /></Balance><Balance2><Balspan>Your LP Shares</Balspan><Bal>{`${balances ? formatCurrency(balances.univ3Held) : 0} UNI-V2`}</Bal><SmallBal>Staking {`${balances ? formatCurrency(balances.uniHeld) : 0} UNI-V2`}</SmallBal><SmallBal>Total Pooled: {`${balances ? formatCurrency(balances.uniPool) : 0} UNI-V2`}</SmallBal><SmallBal>Pool Control: {`${balances ? formatCurrency2(formatCurrency(balances.uniHeld) / formatCurrency(balances.uniPool) * 100) : 0}%`}</SmallBal></Balance2></BalDiv>
 					<PageTitleCentered>{t('lpRewards.intro.title')}</PageTitleCentered>
 					{[POOLS_MAJOR].map((pools, i) => {
 						return (
@@ -345,6 +345,13 @@ const BalDiv = styled.div`
 const SmallBal = styled.div`
 	color: #a47bc1;
 	font-size: 16px;
+`;
+
+const BalLogo = styled.img`
+	width: 36px;
+	height: 36px;
+	margin: 5px auto;
+	margin-bottom:0;
 `;
 
 const Balance = styled.div`

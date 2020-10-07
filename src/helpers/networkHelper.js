@@ -48,7 +48,7 @@ export const SUPPORTED_WALLETS_MAP = {
 };
 
 export const SUPPORTED_WALLETS_MOBILE_MAP = {
-	//METAMASK: 'Metamask',
+	METAMASK: 'Metamask',
 	// TREZOR: 'Trezor',
 	// LEDGER: 'Ledger',
 	COINBASE: 'Coinbase',
